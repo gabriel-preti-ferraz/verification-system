@@ -1,4 +1,4 @@
-import db from "./database/db.js"
+import client from "./database/db.js"
 
 const GRACE_DAYS = 7
 
@@ -6,7 +6,7 @@ function checkLicense(projectId) {
     return new Promise((resolve, reject) => {
         const now = Math.floor(Date.now() / 1000)
 
-        db.get(
+        client.get(
             `SELECT * FROM projects WHERE id = ?`, [projectId],
             (err, project) => {
                 if (err) return reject(err)

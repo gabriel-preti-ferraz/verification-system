@@ -1,29 +1,15 @@
-import Database from "better-sqlite3"
-const db = new Database("database.db")
+import {Client} from "pg"
+import dotenv from "dotenv"
+dotenv.config({path: "../.env"})
 
-db.pragma("journal_mode = WAL")
-db.pragma("foreign_keys = ON")
+const client = new Client({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DB
+})
 
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL
-    )
-    `).run()
+client.connect().then(() => console.log("Database connected"))
 
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS projects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-
-    status TEXT NOT NULL,
-    expires_at INTEGER NOT NULL,
-    days_left INTEGER NOT NULL,
-
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    )
-    `).run()
-
-export default db
+export default client
