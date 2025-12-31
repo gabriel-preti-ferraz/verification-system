@@ -17,9 +17,9 @@ db.prepare(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
 
-    created_at INTEGER NOT NULL,
-    expires_at INTEGER NOT NULL,
     status TEXT NOT NULL,
+    expires_at INTEGER NOT NULL,
+    days_left INTEGER NOT NULL,
 
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
