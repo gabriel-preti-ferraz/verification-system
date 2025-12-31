@@ -4,20 +4,21 @@ const GRACE_DAYS = 7
 
 function checkLicense(projectId) {
     return new Promise((resolve, reject) => {
-        const now = Math.floor(Date.now() / 1000)
+        const now = Date.now()
 
-        client.get(
-            `SELECT * FROM projects WHERE id = ?`, [projectId],
-            (err, project) => {
+        client.query(
+            `SELECT * FROM projects WHERE id = $1`, [projectId],
+            (err, result) => {
                 if (err) return reject(err)
+                const project = result.rows[0]
                 if (!project) return resolve({status: 404, message: "Project not found"})
 
                 if (project.status === "blocked") {
                     return resolve({status: "blocked"})
                 }
 
-                const expiresAt = project.expirestAt
-                const graceUntil = expiresAt + GRACE_DAYS * 24 * 60 * 60
+                const expiresAt = new Date(project.expires_at)
+                const graceUntil = new Date(expiresAt.getTime() + GRACE_DAYS * 24 * 60 * 60 * 1000)
 
                 let licenseState
                 if (now < expiresAt) {
@@ -28,7 +29,8 @@ function checkLicense(projectId) {
                     licenseState = "expired"
                 }
 
-                const daysLeft = Math.ceil((expiresAt - now) / (24 * 60 * 60))
+                const diffMs = graceUntil - now
+                const daysLeft = Math.ceil(diffMs / (24 * 60 * 60 * 1000))
 
                 resolve({
                     status: licenseState,

@@ -1,6 +1,7 @@
 import {Client} from "pg"
 import dotenv from "dotenv"
-dotenv.config({path: "../.env"})
+import { join } from "path"
+dotenv.config({path: join(process.cwd(), ".env")})
 
 const client = new Client({
     host: process.env.DB_HOST,
