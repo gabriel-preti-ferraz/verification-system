@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS projects;
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE,
     status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'blocked', 'grace')),
     days_left INTEGER,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
