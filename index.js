@@ -73,6 +73,17 @@ app.post("/projects/create", async (req, res) => {
     }
 })
 
+app.put("/projects/:id", async (req, res) => {
+    try {
+        const { id } = req.params
+        const {name, expires_at, status, user_id} = req.body
+        const result = await client.query("UPDATE projects SET name = $1, expires_at = $2, status = $3, user_id = $4 WHERE id = $5 RETURNING *", [name, expires_at, status, user_id, id])
+        res.json(result.rows[0])
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+})
+
 app.get("/license/check/", verifyToken, async (req, res) => {
     try {
         const license = await checkLicense(req.project.projectId)
