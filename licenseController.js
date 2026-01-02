@@ -11,9 +11,6 @@ export default async function checkLicense(projectId) {
     if (!project) {
         return {status: "404", message: "Project not found"}
     }
-    if (project.status === "blocked") {
-        return {status: "blocked"}
-    }
 
     const expiresAt = new Date(project.expires_at)
     const graceUntil = new Date(expiresAt.getTime() + GRACE_DAYS * 24 * 60 * 60 * 1000)
