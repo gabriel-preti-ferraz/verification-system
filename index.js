@@ -41,6 +41,16 @@ app.put("/users/:id", async (req, res) => {
     }
 })
 
+app.delete("/users/:id", async (req, res) => {
+    try {
+        const { id } = req.params
+        await client.query("DELETE FROM users WHERE id = $1", [id])
+        res.json({message: "User deleted."})
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+})
+
 app.post("/projects/create", async (req, res) => {
     try {
         const { name, expires_at, user_id } = req.body
