@@ -84,6 +84,16 @@ app.put("/projects/:id", async (req, res) => {
     }
 })
 
+app.delete("/projects/:id", async (req, res) => {
+    try {
+        const { id } = req.params
+        await client.query("DELETE FROM projects WHERE id = $1", [id])
+        res.json({message: "Project deleted."})
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+})
+
 app.get("/license/check/", verifyToken, async (req, res) => {
     try {
         const license = await checkLicense(req.project.projectId)
