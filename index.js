@@ -35,13 +35,17 @@ app.post("/projects/create", async (req, res) => {
         const { name, expires_at, user_id } = req.body
 
         const result = await client.query(
-            "INSERT INTO projects (name, expires_at, user_id) VALUES ($1, $2, $3)",
+            "INSERT INTO projects (name, expires_at, user_id) VALUES ($1, $2, $3) RETURNING *",
             [name, expires_at, user_id]
         )
 
-        const token = jwt.sign({userId: user_id}, process.env.SECRET_KEY)
-
-        console.log(result, token)
+        const project = result.rows[0]
+        const token = jwt.sign({
+            projectId: project.id,
+            userId: user_id
+        }, process.env.SECRET_KEY)
+        
+        res.status(201).json({project, token})
     } catch (err) {
         console.error(err.message)
         res.status(500).send("Server Error")
