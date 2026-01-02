@@ -52,11 +52,9 @@ app.post("/projects/create", async (req, res) => {
     }
 })
 
-app.get("/license/check/:projectId", verifyToken, async (req, res) => {
-    const projectId = req.params.projectId
-
+app.get("/license/check/", verifyToken, async (req, res) => {
     try {
-        const license = await checkLicense(projectId)
+        const license = await checkLicense(req.project.projectId)
 
         if (license.status === 404) return res.status(404).json(license)
         
