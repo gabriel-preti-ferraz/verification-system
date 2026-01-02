@@ -30,6 +30,17 @@ app.post("/users/create", async (req, res) => {
     }
 })
 
+app.put("/users/:id", async (req, res) => {
+    try {
+        const { id } = req.params
+        const {username, email, role} = req.body
+        const result = await client.query("UPDATE users SET username = $1, email = $2, role = $3 WHERE id = $4 RETURNING id, username, email, role", [username, email, role, id])
+        res.json(result.rows[0])
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+})
+
 app.post("/projects/create", async (req, res) => {
     try {
         const { name, expires_at, user_id } = req.body
